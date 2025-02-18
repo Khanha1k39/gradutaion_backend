@@ -13,7 +13,7 @@ app.use(helmet());
 // app.use(compression());
 app.use(compression());
 //init db
-
+require('./dbs/init.mongodb')
 
 //handling error
 
