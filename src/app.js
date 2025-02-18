@@ -7,6 +7,8 @@ const compression = require("compression");
 const app = express();
 
 //init middle ware
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 
 app.use(morgan("dev"))
 app.use(helmet());
@@ -15,6 +17,10 @@ app.use(compression());
 //init db
 require('./dbs/init.mongodb')
 
+
+
+//initrouter
+app.use(require("./routes/index"))
 //handling error
 
 
