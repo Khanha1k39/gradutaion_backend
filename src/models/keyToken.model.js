@@ -17,10 +17,14 @@ const keySchema = new Schema(
       type: String,
       require: "true",
     },
-    refreshToken: {
+    refreshTokenUsed: {
       type: Array,
       default: [],
     },
+    refreshToken: {
+      require: true,
+      type: String
+    }
   },
   {
     timestamps: true,
