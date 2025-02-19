@@ -23,6 +23,11 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
     console.log(error)
   }
 };
+const asyncHandler = fn =>{
+  return (req,res,next)=>{
+    fn(req,res,next).catch(next)
+  }
+}
 module.exports = {
-  createTokenPair,
+  createTokenPair,asyncHandler
 };
