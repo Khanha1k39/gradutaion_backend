@@ -36,6 +36,24 @@ class ProductController {
             metadata: await ProductFactory.unPublishProductByShop({ product_shop: req.user.userId, product_id: req.params.id })
         }).send(res);
     }
+    searchProductsByUser = async (req, res) => {
+        new OkResponse({
+            message: "Search successfully",
+            metadata: await ProductFactory.searchProductsByUser(req.params)
+        }).send(res);
+    }
+    findAllProduct = async (req, res) => {
+        new OkResponse({
+            message: "find all successfully",
+            metadata: await ProductFactory.findAllProducts(req.query)
+        }).send(res);
+    }
+    findProduct = async (req, res) => {
+        new OkResponse({
+            message: "find product successfully",
+            metadata: await ProductFactory.findProduct(req.params.id)
+        }).send(res);
+    }
 
 }
 

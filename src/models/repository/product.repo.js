@@ -1,5 +1,6 @@
 const { Types } = require("mongoose")
 const { product } = require("../product.model")
+const { getSelectData, getUnSelectData } = require("../../utils")
 
 const findAllDraftsForShop = async ({ query, limit, skip }) => {
     return await product.find(query).populate('product_shop', 'name email -_id')
@@ -54,4 +55,29 @@ const unPublishProductByShop = async ({ product_shop, product_id }) => {
 
 
 }
-module.exports = { unPublishProductByShop, findAllDraftsForShop, publishProductByShop, getAllPublishedForShop }
+const searchProductsByUser = async ({ keySearch }) => {
+    const regxSearch = new RegExp(keySearch)
+    const result = await product.find({
+        isPublish: true,
+        $text: {
+            $search: regxSearch
+        }
+    },
+        { score: { $meta: 'textScore' } }
+    ).sort({ score: { $meta: 'textScore' } }).lean()
+    // return await queryProduct({ limit, query, skip })
+
+    return result;
+}
+const findAllProducts = async ({ limit, sort, page, filter, select }) => {
+    const skip = (page - 1) * limit;
+    const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 }
+    const products = await product.find(filter)
+        .sort(sortBy).skip(skip).limit(limit)
+        .select(getSelectData(select)).lean()
+    return products;
+}
+const findProduct = async ({ product_id, unSelect }) => {
+    return await product.findOne({ isPublish: true, _id: new Types.ObjectId(product_id) }).select(getUnSelectData(unSelect))
+}
+module.exports = { findProduct, findAllProducts, searchProductsByUser, unPublishProductByShop, findAllDraftsForShop, publishProductByShop, getAllPublishedForShop }

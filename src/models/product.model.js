@@ -27,14 +27,20 @@ const productSchema = new Schema({
         type: Array, default: [],
         index: true, select: false
     },
-    isDraft: { type: Boolean, default: true },
-    isPublish: { type: Boolean, default: false }
+    isDraft: { type: Boolean, default: true, index: true },
+    isPublish: { type: Boolean, default: false, index: true }
 
 
 }, {
     collection: COLLECTION_NAME,
     timestamps: true
 })
+//indexing
+productSchema.index({
+    product_name: "text",
+    product_description: "text"
+})
+
 //document middleware run before save
 productSchema.pre('save', function (next) {
     this.product_slug = slugify(this.product_name, { lower: true });

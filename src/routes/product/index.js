@@ -5,6 +5,11 @@ const { asyncHandler, authentication } = require("../../auth/auth.util");
 const router = express.Router()
 
 
+
+router.post('/search/:keySearch', asyncHandler(productController.searchProductsByUser));
+router.get('', asyncHandler(productController.findAllProduct));
+router.get('/:id', asyncHandler(productController.findProduct));
+
 //authentication
 router.use(authentication)
 router.post('', asyncHandler(productController.createProduct));

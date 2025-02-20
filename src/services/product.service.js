@@ -1,6 +1,6 @@
 const { BadRequestError } = require("../core/error.response");
 const { electronic, clothing, product } = require("../models/product.model");
-const { findAllDraftsForShop, getAllPublishedForShop, publishProductByShop, unPublishProductByShop } = require("../models/repository/product.repo");
+const { findAllDraftsForShop, getAllPublishedForShop, publishProductByShop, unPublishProductByShop, searchProductsByUser, findAllProducts, findProduct } = require("../models/repository/product.repo");
 class ProductFactory {
     static productRegistry = {};
     static registerProductType(type, classRef) {
@@ -43,6 +43,17 @@ class ProductFactory {
     static async unPublishProductByShop({ product_shop, product_id }) {
         return await unPublishProductByShop({ product_shop, product_id })
     }
+    static async searchProductsByUser({ keySearch }) {
+        return await searchProductsByUser({ keySearch })
+    }
+    static async findAllProducts({ limit = 50, sort = 'ctime', page = 1, filter = { isPublish: true } }) {
+        return await findAllProducts({ limit, sort, page, filter, select: ['product_name', 'product_price', 'product_thumb'] })
+    }
+    static async findProduct(product_id) {
+        return await findProduct({ product_id, unSelect: ['__v'] })
+    }
+
+
 }
 
 class Product {
