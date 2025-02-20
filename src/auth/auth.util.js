@@ -7,10 +7,13 @@ const HEADER = {
   AUTHORAZION: "authorization"
 }
 const createTokenPair = async (payload, publicKey, privateKey) => {
+  console.log("payload", payload)
   try {
     //accessToken
     const accessToken = await JWT.sign(payload, publicKey, {
       expiresIn: "2 days",
+      // expiresIn: "10s",
+
     });
 
     //refreshToken
@@ -42,6 +45,7 @@ const authentication = asyncHandler(async (req, res, next) => {
     throw new NotFoundError("Not found keyStore")
   }
   const accessToken = req.headers[HEADER.AUTHORAZION];
+  console.log("keystore ", keyStore)
   try {
     const decodeUser = JWT.verify(accessToken, keyStore.publicKey);
     if (userId !== decodeUser.userId) {
@@ -54,6 +58,9 @@ const authentication = asyncHandler(async (req, res, next) => {
     throw error;
   }
 })
+const verifyJWT = async (token, keySecret) => {
+  return await JWT.verify(token, keySecret);
+}
 module.exports = {
-  createTokenPair, asyncHandler, authentication
+  createTokenPair, asyncHandler, authentication, verifyJWT
 };
