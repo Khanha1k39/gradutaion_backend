@@ -8,5 +8,11 @@ const router = express.Router()
 //authentication
 router.use(authentication)
 router.post('', asyncHandler(productController.createProduct));
+router.get('/drafts/all', asyncHandler(productController.getAllDraftsForShop));
+router.get('/published/all', asyncHandler(productController.getAllPublishedForShop));
+
+router.post('/publish/:id', asyncHandler(productController.PublishProductForShop));
+router.post('/unpublish/:id', asyncHandler(productController.unPublishProductForShop));
+
 
 module.exports = router;

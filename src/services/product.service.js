@@ -1,19 +1,47 @@
+const { BadRequestError } = require("../core/error.response");
 const { electronic, clothing, product } = require("../models/product.model");
+const { findAllDraftsForShop, getAllPublishedForShop, publishProductByShop, unPublishProductByShop } = require("../models/repository/product.repo");
 class ProductFactory {
+    static productRegistry = {};
+    static registerProductType(type, classRef) {
+        ProductFactory.productRegistry[type] = classRef
+
+    }
     static async createProduct(type, payload) {
         console.log("type payload", type, payload)
-        switch (type) {
-            case "Electronic":
-                return new Electronics(payload).createProduct()
-                break;
-            case "Clothing":
-                return new Clothing(payload).createProduct()
-                break;
-
-
-            default:
-                break;
+        const productClass = this.productRegistry[type]
+        if (!productClass) {
+            throw new BadRequestError("Invalid product type")
         }
+        return new productClass(payload).createProduct();
+        //     switch (type) {
+        //         case "Electronic":
+        //             return new Electronics(payload).createProduct()
+        //             break;
+        //         case "Clothing":
+        //             return new Clothing(payload).createProduct()
+        //             break;
+
+
+        //         default:
+        //             throw new BadRequestError("`Invalid Request types`")
+        //             break;
+        //     }
+    }
+    static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
+        const query = { product_shop, isDraft: true }
+        return await findAllDraftsForShop({ query, limit, skip })
+    }
+
+    static async getAllPublishedForShop({ product_shop, limit = 50, skip = 0 }) {
+        const query = { product_shop, isPublish: true }
+        return await getAllPublishedForShop({ query, limit, skip })
+    }
+    static async publishProductByShop({ product_shop, product_id }) {
+        return await publishProductByShop({ product_shop, product_id })
+    }
+    static async unPublishProductByShop({ product_shop, product_id }) {
+        return await unPublishProductByShop({ product_shop, product_id })
     }
 }
 
@@ -36,6 +64,7 @@ class Product {
     async createProduct(id) {
         return await product.create({ ...this, _id: id });
     }
+
 }
 class Clothing extends Product {
 
@@ -63,5 +92,7 @@ class Electronics extends Product {
         return newProduct;
     }
 }
+ProductFactory.registerProductType("Electronic", Electronics)
+ProductFactory.registerProductType("Clothing", Clothing)
 
 module.exports = ProductFactory
