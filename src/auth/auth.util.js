@@ -4,7 +4,10 @@ const { AuthFailureError, NotFoundError } = require("../core/error.response");
 const { findByUserId } = require("../services/keyToken.service");
 const HEADER = {
   CLIENT_ID: 'x-client-id',
-  AUTHORAZION: "authorization"
+  AUTHORAZION: "authorization",
+  REFRESHTOKEN: "refreshtoken"
+
+
 }
 const createTokenPair = async (payload, publicKey, privateKey) => {
   console.log("payload", payload)
@@ -44,6 +47,26 @@ const authentication = asyncHandler(async (req, res, next) => {
   if (!keyStore) {
     throw new NotFoundError("Not found keyStore")
   }
+  //
+  if (req.headers[HEADER.REFRESHTOKEN]) {
+    try {
+      const refreshToken = req.headers[HEADER.REFRESHTOKEN];
+
+      const decodeUser = JWT.verify(refreshToken, keyStore.privateKey);
+      if (userId !== decodeUser.userId) {
+        throw new AuthFailureError("Invalid user")
+      }
+      req.keyStore = keyStore
+      req.user = decodeUser;
+      req.refreshToken = refreshToken
+      return next();
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  //
   const accessToken = req.headers[HEADER.AUTHORAZION];
   console.log("keystore ", keyStore)
   try {
@@ -52,6 +75,8 @@ const authentication = asyncHandler(async (req, res, next) => {
       throw new AuthFailureError("Invalid user")
     }
     req.keyStore = keyStore
+    req.user = decodeUser;
+
     return next();
 
   } catch (error) {

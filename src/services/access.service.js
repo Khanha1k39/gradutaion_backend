@@ -90,7 +90,7 @@ class AccessService {
         console.log("del key", delKey);
         return delKey;
     }
-    static handleRefreshToken = async (refreshToken) => {
+    static handleRefreshToken = async ({ refreshToken, user, keyStore }) => {
         const foundToken = await KeyStokenService.findByRefreshTokenUsed(refreshToken);
         if (foundToken) {
             const { userId, email } = await verifyJWT(refreshToken, foundToken.privateKey);
