@@ -44,6 +44,7 @@ productSchema.index({
 //document middleware run before save
 productSchema.pre('save', function (next) {
     this.product_slug = slugify(this.product_name, { lower: true });
+    console.log('Hello from pre save');
     next()
 
 })

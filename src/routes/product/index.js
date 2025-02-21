@@ -13,6 +13,8 @@ router.get('/:id', asyncHandler(productController.findProduct));
 //authentication
 router.use(authentication)
 router.post('', asyncHandler(productController.createProduct));
+router.patch('/:id', asyncHandler(productController.updateProduct));
+
 router.get('/drafts/all', asyncHandler(productController.getAllDraftsForShop));
 router.get('/published/all', asyncHandler(productController.getAllPublishedForShop));
 
