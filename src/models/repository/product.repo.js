@@ -78,7 +78,9 @@ const findAllProducts = async ({ limit, sort, page, filter, select }) => {
     return products;
 }
 const findProduct = async ({ product_id, unSelect }) => {
-    return await product.findOne({ isPublish: true, _id: new Types.ObjectId(product_id) }).select(getUnSelectData(unSelect))
+    const data = await product.findOne({ isPublish: true, _id: new Types.ObjectId(product_id) }).select(getUnSelectData(unSelect))
+    console.log(data)
+    return data;
 }
 const updateProductById = async ({
     productId, bodyUpdate, model, isNew = true

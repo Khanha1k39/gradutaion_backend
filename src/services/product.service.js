@@ -3,6 +3,7 @@ const { BadRequestError } = require("../core/error.response");
 const { electronic, clothing, product } = require("../models/product.model");
 const { findAllDraftsForShop, getAllPublishedForShop, publishProductByShop, unPublishProductByShop, searchProductsByUser, findAllProducts, findProduct, updateProductById } = require("../models/repository/product.repo");
 const { updateNestedObjectParser, removeUndefiedObject } = require("../utils");
+const { insertInventory } = require("../models/repository/inventory.repo");
 class ProductFactory {
     static productRegistry = {};
     static registerProductType(type, classRef) {
@@ -68,7 +69,16 @@ class Product {
 
     // create new product
     async createProduct(id) {
-        return await product.create({ ...this, _id: id });
+        const createdProduct = await product.create({ ...this, _id: id })
+        if (createdProduct) {
+            insertInventory({
+                productId: createdProduct._id,
+                shopId: createdProduct.product_shop,
+                stock: createdProduct.product_quantity
+            })
+
+        }
+        return createdProduct;
     }
     async updateProduct(id, payload) {
         return await updateProductById({
