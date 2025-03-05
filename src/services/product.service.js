@@ -93,7 +93,6 @@ class Product {
     this.product_quantity = product_quantity;
   }
 
-  // create new product
   async createProduct(id) {
     const createdProduct = await product.create({ ...this, _id: id });
     if (createdProduct) {
@@ -153,7 +152,6 @@ class Clothing extends Product {
   }
 }
 
-// Define sub-class for different product types Electronics
 class Electronics extends Product {
   async createProduct() {
     const newElectronic = await electronic.create({

@@ -16,7 +16,6 @@ class CommentService {
 
     let rightValue;
     if (parentCommentId) {
-      // reply comment
     } else {
       const maxRightValue = await Comment.findOne({
         comment_productId: convertToObjectIdMongoDB(productId),
@@ -31,11 +30,9 @@ class CommentService {
       }
     }
 
-    // insert to comment
     comment.comment_left = rightValue;
     comment.comment_right = rightValue + 1;
 
-    // Save comment
     return await comment.save();
   }
 }

@@ -23,30 +23,24 @@ const pushNotiToSystem = async ({
   });
   return newNoti;
 };
-const listNotiByUser = async ({
-  userId = "1", // ID người nhận thông báo
-  type = "ALL", // Loại thông báo, mặc định là 'ALL'
-  isRead = 0, // Trạng thái đọc của thông báo
-}) => {
-  // Xây dựng điều kiện lọc cho truy vấn
+const listNotiByUser = async ({ userId = "1", type = "ALL", isRead = 0 }) => {
   const match = { noti_receivedId: userId };
 
   if (type !== "ALL") {
-    match["noti_type"] = type; // Thêm điều kiện lọc theo loại thông báo
+    match["noti_type"] = type;
   }
 
-  // Sử dụng Mongoose Aggregation để lọc và chỉ lấy các trường cần thiết
   return await notificationModel.aggregate([
     {
-      $match: match, // Lọc thông báo theo người nhận và loại thông báo
+      $match: match,
     },
     {
       $project: {
-        noti_type: 1, // Chỉ lấy trường 'noti_type'
-        noti_senderId: 1, // Chỉ lấy trường 'noti_senderId'
-        noti_receivedId: 1, // Chỉ lấy trường 'noti_receivedId'
-        noti_content: 1, // Chỉ lấy trường 'noti_content'
-        createAt: 1, // Chỉ lấy trường 'createAt' (ngày tạo thông báo)
+        noti_type: 1,
+        noti_senderId: 1,
+        noti_receivedId: 1,
+        noti_content: 1,
+        createAt: 1,
       },
     },
   ]);

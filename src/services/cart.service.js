@@ -40,26 +40,21 @@ class CartService {
     const { productId, quantity, old_quantity } =
       shop_order_ids[0]?.item_products[0];
 
-    // check product
     const foundProduct = await getProductById(productId);
     if (!foundProduct) throw new NotFoundError("Product not found");
 
-    // compare product with shop
     if (foundProduct.product_shop.toString() !== shop_order_ids[0]?.shopId) {
       throw new NotFoundError("Product do not belong to the shop");
     }
 
-    // handle quantity
     if (quantity === 0) {
-      // deleted
-      // handle product removal (e.g., remove product from cart)
     }
 
     return await CartService.updateUserCartQuantity({
       userId,
       product: {
         productId,
-        quantity: quantity - old_quantity, // Update the cart with new quantity
+        quantity: quantity - old_quantity,
       },
     });
   }
